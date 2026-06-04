@@ -643,6 +643,11 @@ double truncate_normalized_double(double d)
 	else if (d >= 1.0)
 		return 1.0;
 
+
+	float f = static_cast<float>(d);
+
+	return f;
+
 	static const long long signed int mantissa_bits = 23;
 
 	static const double epsilon = pow(2, -mantissa_bits);
@@ -682,9 +687,9 @@ void proceed_symplectic4(custom_math::vector_3& pos, custom_math::vector_3& vel,
 		const double distance = grav_dir.length();
 		const double Rs = 2 * grav_constant * sun_mass / (speed_of_light * speed_of_light);
 
-		const double alpha = 1.0;// 2.0 - sqrt(1 - (vel.length() * vel.length()) / (speed_of_light * speed_of_light));
+		const double alpha = 2.0 - sqrt(1 - (vel.length() * vel.length()) / (speed_of_light * speed_of_light));
 
-		const double beta = 1.0;//(1.0 - Rs / distance);
+		const double beta = sqrt(1.0 - Rs / distance);
 		const double beta_truncated = truncate_normalized_double(beta);
 
 		pos += vel * c[0] * dt * beta_truncated;
@@ -696,9 +701,9 @@ void proceed_symplectic4(custom_math::vector_3& pos, custom_math::vector_3& vel,
 		const double distance = grav_dir.length();
 		const double Rs = 2 * grav_constant * sun_mass / (speed_of_light * speed_of_light);
 
-		const double alpha = 1.0;//2.0 - sqrt(1 - (vel.length() * vel.length()) / (speed_of_light * speed_of_light));
+		const double alpha = 2.0 - sqrt(1 - (vel.length() * vel.length()) / (speed_of_light * speed_of_light));
 
-		const double beta = 1.0;//sqrt(1.0 - Rs / distance);
+		const double beta = sqrt(1.0 - Rs / distance);
 		const double beta_truncated = truncate_normalized_double(beta);
 
 		pos += vel * c[1] * dt * beta_truncated;
@@ -710,9 +715,9 @@ void proceed_symplectic4(custom_math::vector_3& pos, custom_math::vector_3& vel,
 		const double distance = grav_dir.length();
 		const double Rs = 2 * grav_constant * sun_mass / (speed_of_light * speed_of_light);
 
-		const double alpha = 1.0;//2.0 - sqrt(1 - (vel.length() * vel.length()) / (speed_of_light * speed_of_light));
+		const double alpha = 2.0 - sqrt(1 - (vel.length() * vel.length()) / (speed_of_light * speed_of_light));
 
-		const double beta = 1.0;//sqrt(1.0 - Rs / distance);
+		const double beta = sqrt(1.0 - Rs / distance);
 		const double beta_truncated = truncate_normalized_double(beta);
 
 		pos += vel * c[2] * dt * beta_truncated;
@@ -724,9 +729,9 @@ void proceed_symplectic4(custom_math::vector_3& pos, custom_math::vector_3& vel,
 		const double distance = grav_dir.length();
 		const double Rs = 2 * grav_constant * sun_mass / (speed_of_light * speed_of_light);
 
-		const double alpha = 1.0;//2.0 - sqrt(1 - (vel.length() * vel.length()) / (speed_of_light * speed_of_light));
+		const double alpha = 2.0 - sqrt(1 - (vel.length() * vel.length()) / (speed_of_light * speed_of_light));
 
-		const double beta = 1.0;//sqrt(1.0 - Rs / distance);
+		const double beta = sqrt(1.0 - Rs / distance);
 		const double beta_truncated = truncate_normalized_double(beta);
 
 		pos += vel * c[3] * dt * beta_truncated;
@@ -741,7 +746,7 @@ void proceed_symplectic4(custom_math::vector_3& pos, custom_math::vector_3& vel,
 
 void proceed_Euler(custom_math::vector_3& pos, custom_math::vector_3& vel, const long double G, const long double dt)
 {
-	const custom_math::vector_3 grav_dir = sun_pos - pos;	
+	const custom_math::vector_3 grav_dir = sun_pos - pos;
 	const double distance = grav_dir.length();
 	const double Rs = 2 * grav_constant * sun_mass / (speed_of_light * speed_of_light);
 
@@ -764,16 +769,18 @@ void idle_func(void)
 {
 	frame_count++;
 
-	proceed_symplectic4(mercury_pos, mercury_vel, grav_constant, dt);
+	custom_math::vector_3 last_pos = mercury_pos;
 
-	// > 0 : receding  (heading toward aphelion)
-	// < 0 : approaching (heading toward perihelion)
+	//proceed_Euler(mercury_pos, mercury_vel, grav_constant, dt);
+	proceed_symplectic4(mercury_pos, mercury_vel, grav_constant, dt);
+	
 	const long double radial_vel = mercury_pos.dot(mercury_vel);
 
 	if (decreasing)
 	{
-		if (radial_vel > 0)            // was approaching, now receding -> perihelion
+		if (radial_vel > 0)
 		{
+			// hit perihelion
 			cout << "hit perihelion" << endl;
 			decreasing = false;
 			return;
@@ -781,20 +788,22 @@ void idle_func(void)
 	}
 	else
 	{
-		if (radial_vel < 0 && frame_count > 1)   // was receding, now approaching -> aphelion
+		if (radial_vel < 0 && frame_count > 1)
 		{
+			// hit aphelion
 			cout << "hit aphelion" << endl;
+
 			orbit_count++;
 
-			custom_math::vector_3 current_dir = mercury_pos;
+			custom_math::vector_3 current_dir = last_pos;
 			current_dir.normalize();
 
-			long double d = current_dir.dot(previous_dir);
-			if (d > 1.0L) d = 1.0L;     // clamp so acos never NaNs
-			if (d < -1.0L) d = -1.0L;
+			const long double d = current_dir.dot(previous_dir);
 
 			const long double angle = acos(d);
-			if (isnan(angle)) cout << "nan" << endl;
+
+			if (isnan(angle))
+				cout << "nan" << endl;
 
 			previous_dir = current_dir;
 
@@ -805,22 +814,29 @@ void idle_func(void)
 			cout << "dot   " << d << endl;
 			cout << "angle " << angle * num_orbits_per_earth_century * to_arcseconds << endl;
 			cout << "delta " << delta * num_orbits_per_earth_century * to_arcseconds << endl;
+			cout << "delta_earth " << delta_earth * 100 * to_arcseconds << endl;
+
+
 			cout << endl;
 
 #ifdef USE_OPENGL
 			positions.clear();
 #endif
 			decreasing = true;
+
 			exit(0);
 		}
 	}
 
 #ifdef USE_OPENGL
+
 	if (frame_count % 100000 == 0)
 	{
 		positions.push_back(mercury_pos);
+
 		glutPostRedisplay();
 	}
+
 #endif
 }
 

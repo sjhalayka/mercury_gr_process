@@ -19,7 +19,7 @@
 
 vector<custom_math::vector_3> positions;
 
-const long double dt = 0.01;
+const long double dt = 0.1;
 
 
 
@@ -33,7 +33,7 @@ uv_camera main_camera;
 
 int win_id = 0;
 int win_x = 800, win_y = 600;
-long double camera_w = 2e11;
+long double camera_w = 5e11;
 
 long double camera_fov = 45;
 long double camera_x_transform = 0;
@@ -42,7 +42,7 @@ long double u_spacer = 0.01;
 long double v_spacer = 0.5 * u_spacer;
 long double w_spacer = 0.1;
 long double camera_near = 1;
-long double camera_far = 1000000000;
+long double camera_far = 1e20;
 
 bool lmb_down = false;
 bool mmb_down = false;
@@ -113,7 +113,8 @@ custom_math::vector_3 sun_pos(0, 0, 0);
 custom_math::vector_3 mercury_pos(0, 69817079000.0, 0);
 custom_math::vector_3 mercury_vel(-38858.47, 0, 0);
 
-
+//custom_math::vector_3 mercury_pos(0, 1.521e11, 0);
+//custom_math::vector_3 mercury_vel(-2.93e4, 0, 0);
 
 
 
@@ -136,6 +137,7 @@ custom_math::vector_3 previous_dir(0, 1, 0);
 
 const long double pi = 4.0 * atan(1.0);
 const long double delta = 6 * pi * grav_constant * sun_mass / (speed_of_light*speed_of_light * (1 - 0.2056*0.2056) * 57.909e9);
+const long double delta_earth = 6 * pi * grav_constant * sun_mass / (speed_of_light * speed_of_light * (1 - 0.0167 * 0.0167) * 1.496e11);
 
 
 
