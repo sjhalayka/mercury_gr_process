@@ -3,7 +3,7 @@
 
 
 
-
+	 
 
 
 
@@ -13,13 +13,17 @@
 #ifdef USE_OPENGL
 #include "uv_camera.h"
 
-#include <cstdlib>
+#include <cstdlib>		
 #include <GL/glut.h>       //GLUT Library
+
+
+
+
 
 
 vector<custom_math::vector_3> positions;
 
-const long double dt = 0.1;
+const double dt = 0.1;
 
 
 
@@ -33,16 +37,16 @@ uv_camera main_camera;
 
 int win_id = 0;
 int win_x = 800, win_y = 600;
-long double camera_w = 5e11;
+double camera_w = 5e11;
 
-long double camera_fov = 45;
-long double camera_x_transform = 0;
-long double camera_y_transform = 0;
-long double u_spacer = 0.01;
-long double v_spacer = 0.5 * u_spacer;
-long double w_spacer = 0.1;
-long double camera_near = 1;
-long double camera_far = 1e20;
+double camera_fov = 45;
+double camera_x_transform = 0;
+double camera_y_transform = 0;
+double u_spacer = 0.01;
+double v_spacer = 0.5 * u_spacer;
+double w_spacer = 0.1;
+double camera_near = 1;
+double camera_far = 1e20;
 
 bool lmb_down = false;
 bool mmb_down = false;
@@ -105,16 +109,19 @@ void passive_motion_func(int x, int y);
 void render_string(int x, const int y, void *font, const string &text);
 void draw_objects(void);
 
-const long double speed_of_light = 299792458;
-const long double grav_constant = 6.6743e-11;
-const long double sun_mass = 1.98847e30;
+const double speed_of_light = 299792458;
+const double grav_constant = 6.6743e-11;
+const double sun_mass = 1.98847e30;
 
 custom_math::vector_3 sun_pos(0, 0, 0);
-custom_math::vector_3 mercury_pos(0, 69817079000.0, 0);
-custom_math::vector_3 mercury_vel(-38858.47, 0, 0);
 
-//custom_math::vector_3 mercury_pos(0, 1.521e11, 0);
-//custom_math::vector_3 mercury_vel(-2.93e4, 0, 0);
+// Mercury
+custom_math::vector_3 planet_pos(0, 6.9817079e10, 0);
+custom_math::vector_3 planet_vel(-38858.47, 0, 0);
+
+// Earth
+//custom_math::vector_3 planet_pos(0, 1.521e11, 0);
+//custom_math::vector_3 planet_vel(-2.93e4, 0, 0);
 
 
 
@@ -135,9 +142,9 @@ custom_math::vector_3 previous_dir(0, 1, 0);
 // https://astronomy.stackexchange.com/a/29008/15517
 
 
-const long double pi = 4.0 * atan(1.0);
-const long double delta = 6 * pi * grav_constant * sun_mass / (speed_of_light*speed_of_light * (1 - 0.2056*0.2056) * 57.909e9);
-const long double delta_earth = 6 * pi * grav_constant * sun_mass / (speed_of_light * speed_of_light * (1 - 0.0167 * 0.0167) * 1.496e11);
+const double pi = 4.0 * atan(1.0);
+const double delta = 6 * pi * grav_constant * sun_mass / (speed_of_light*speed_of_light * (1 - 0.2056*0.2056) * 57.909e9);
+const double delta_earth = 6 * pi * grav_constant * sun_mass / (speed_of_light * speed_of_light * (1 - 0.0167 * 0.0167) * 1.496e11);
 
 
 
