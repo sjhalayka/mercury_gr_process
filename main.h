@@ -23,7 +23,7 @@
 
 vector<custom_math::vector_3> positions;
 
-const double dt = 0.1;
+
 
 
 
@@ -124,7 +124,7 @@ custom_math::vector_3 planet_vel(-38858.47, 0, 0);
 //custom_math::vector_3 planet_vel(-2.93e4, 0, 0);
 
 
-
+const double dt = 0.01;
 
 
 

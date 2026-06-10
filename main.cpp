@@ -64,11 +64,6 @@ custom_math::vector_3 grav_acceleration(const custom_math::vector_3& pos, const 
 
 
 
-#include <bitset>
-#include <iostream>
-#include <string>
-
-
 
 
 
@@ -82,25 +77,8 @@ double truncate_normalized_double(double d)
 	{
 		return 1.0;
 	}
-	
 
-	float f = static_cast<float>(d);
-
-	return static_cast<double>(f);
-
-
-
-
-
-
-	//static const long long signed int mantissa_bits = 23;
-
-	//static const double epsilon = pow(2, -mantissa_bits);
-	//const double remainder = fmod(d, epsilon);
-
-	//d = nexttowardf(d, d - remainder);
-
-	//return d;
+	return nexttowardf(d, 0.0);
 }
 
 

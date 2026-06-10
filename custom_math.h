@@ -16,6 +16,8 @@ using std::set;
 #include <map>
 using std::map;
 
+#include <fstream>
+using std::basic_ifstream;
 
 #include <iostream>
 using std::cout;
@@ -24,8 +26,10 @@ using std::endl;
 #include <cmath>
 #include <cstdlib>
 
+#define TTMATH_NOASM
 
-
+#include <ttmath/ttmath.h>
+using namespace ttmath;
 
 
 
