@@ -26,10 +26,7 @@ using std::endl;
 #include <cmath>
 #include <cstdlib>
 
-#define TTMATH_NOASM
 
-#include <ttmath/ttmath.h>
-using namespace ttmath;
 
 
 
